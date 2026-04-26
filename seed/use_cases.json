@@ -1,0 +1,38 @@
+[
+  {
+    "sponsor_email": "requestor@agency.gov",
+    "title": "Internal policy Q&A copilot",
+    "business_purpose": "Answer employee HR and security policy questions via RAG over internal documents.",
+    "model_name": "gpt-4o",
+    "hosting": "agency-azure",
+    "intake": {
+      "contains_pii": true, "contains_cui": false, "external_vendor": false,
+      "hosting": "agency-azure", "model_kind": "llm_api",
+      "data_types": ["internal_policy_docs", "employee_qna"]
+    }
+  },
+  {
+    "sponsor_email": "requestor@agency.gov",
+    "title": "Contract clause extraction",
+    "business_purpose": "Extract clauses from procurement contracts using a commercial LLM API.",
+    "model_name": "commercial-llm-1",
+    "hosting": "vendor_cloud",
+    "intake": {
+      "contains_pii": false, "contains_cui": true, "external_vendor": true,
+      "hosting": "vendor_cloud", "model_kind": "llm_api",
+      "data_types": ["contract_terms", "vendor_identities"]
+    }
+  },
+  {
+    "sponsor_email": "requestor@agency.gov",
+    "title": "Facility predictive maintenance",
+    "business_purpose": "Predict HVAC failures from building telemetry using an in-house ML model.",
+    "model_name": "hvac-rf-v1",
+    "hosting": "on-prem",
+    "intake": {
+      "contains_pii": false, "contains_cui": false, "external_vendor": false,
+      "hosting": "on-prem", "model_kind": "ml_model",
+      "data_types": ["facility_telemetry"]
+    }
+  }
+]

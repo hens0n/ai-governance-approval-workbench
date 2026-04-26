@@ -1,0 +1,9 @@
+{
+  "version": "v1",
+  "rules": [
+    {"id": "cui", "when": {"contains_cui": true}, "tier_min": "high", "classification": "cui"},
+    {"id": "external_vendor", "when": {"external_vendor": true}, "tier_min": "high"},
+    {"id": "pii", "when": {"contains_pii": true}, "tier_min": "moderate", "classification": "sensitive"},
+    {"id": "internal_only", "when": {"contains_pii": false, "contains_cui": false, "external_vendor": false}, "tier_min": "low", "classification": "internal"}
+  ]
+}

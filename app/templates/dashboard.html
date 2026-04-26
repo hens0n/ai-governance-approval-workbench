@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · AI Governance Workbench{% endblock %}
+{% block content %}
+{% set by_tier = {'low': 0, 'moderate': 0, 'high': 0, 'unscored': 0} %}
+{% for uc in use_cases %}
+  {% set _ = by_tier.update({(uc.risk_tier.value if uc.risk_tier else 'unscored'): by_tier[(uc.risk_tier.value if uc.risk_tier else 'unscored')] + 1}) %}
+{% endfor %}
+{% set total = use_cases|length %}
+
+<section class="mb-8 flex items-end justify-between gap-4">
+  <div>
+    <h1 class="text-2xl font-semibold tracking-tight">Dashboard</h1>
+    <p class="text-sm text-mutedfg mt-1">Overview of all AI use cases under review.</p>
+  </div>
+  <a href="/use-cases/new" class="btn btn-primary">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    New use case
+  </a>
+</section>
+
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+  <div class="card card-pad">
+    <div class="flex items-center justify-between">
+      <div class="text-[12px] font-medium text-mutedfg">Total cases</div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-mutedfg"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    </div>
+    <div class="mt-2 flex items-baseline gap-2">
+      <span class="text-3xl font-semibold tabnum">{{ total }}</span>
+      <span class="text-[12px] text-mutedfg">in portfolio</span>
+    </div>
+  </div>
+  <div class="card card-pad">
+    <div class="flex items-center justify-between">
+      <div class="text-[12px] font-medium text-mutedfg">Low risk</div>
+      <span class="badge badge-low"><span class="badge-dot"></span>Low</span>
+    </div>
+    <div class="mt-2 text-3xl font-semibold tabnum">{{ by_tier.low }}</div>
+  </div>
+  <div class="card card-pad">
+    <div class="flex items-center justify-between">
+      <div class="text-[12px] font-medium text-mutedfg">Moderate risk</div>
+      <span class="badge badge-moderate"><span class="badge-dot"></span>Moderate</span>
+    </div>
+    <div class="mt-2 text-3xl font-semibold tabnum">{{ by_tier.moderate }}</div>
+  </div>
+  <div class="card card-pad">
+    <div class="flex items-center justify-between">
+      <div class="text-[12px] font-medium text-mutedfg">High risk</div>
+      <span class="badge badge-high"><span class="badge-dot"></span>High</span>
+    </div>
+    <div class="mt-2 text-3xl font-semibold tabnum">{{ by_tier.high }}</div>
+  </div>
+</section>
+
+<section class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+  <div class="lg:col-span-3">
+    <div class="card overflow-hidden">
+      <div class="px-6 py-4 flex items-center justify-between border-b border-border">
+        <div>
+          <h2 class="text-base font-semibold">Use cases</h2>
+          <p class="text-[12px] text-mutedfg mt-0.5">{{ total }} record{{ '' if total == 1 else 's' }}</p>
+        </div>
+      </div>
+      {% if use_cases %}
+      <table class="t">
+        <thead>
+          <tr>
+            <th style="width: 6%;">ID</th>
+            <th style="width: 42%;">Title</th>
+            <th style="width: 18%;">Status</th>
+            <th style="width: 16%;">Tier</th>
+            <th style="width: 18%;">Classification</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for uc in use_cases %}
+            {% set tier = uc.risk_tier.value if uc.risk_tier else 'unscored' %}
+            {% set cls = uc.classification.value if uc.classification else 'unclassified' %}
+            <tr>
+              <td class="font-mono text-mutedfg tabnum">{{ '%03d' % uc.id }}</td>
+              <td>
+                <a href="/use-cases/{{ uc.id }}" class="link">{{ uc.title }}</a>
+              </td>
+              <td>
+                <span class="pill">{{ uc.status.value|replace('_', ' ') }}</span>
+              </td>
+              <td>
+                {% if tier == 'high' %}
+                  <span class="badge badge-high"><span class="badge-dot"></span>High</span>
+                {% elif tier == 'moderate' %}
+                  <span class="badge badge-moderate"><span class="badge-dot"></span>Moderate</span>
+                {% elif tier == 'low' %}
+                  <span class="badge badge-low"><span class="badge-dot"></span>Low</span>
+                {% else %}
+                  <span class="badge badge-neutral">—</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if cls == 'cui' %}
+                  <span class="badge badge-cui">CUI</span>
+                {% else %}
+                  <span class="text-[13px] text-mutedfg">{{ cls }}</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="px-6 py-14 text-center">
+        <div class="empty-icon mx-auto">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div class="text-sm font-medium">No use cases yet</div>
+        <p class="text-[13px] text-mutedfg mt-1">File the first proposed use case to begin the review cycle.</p>
+        <a href="/use-cases/new" class="btn btn-primary mt-4">Create the first one</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <aside class="lg:col-span-1 space-y-6">
+    <div class="card card-pad">
+      <div class="text-[12px] font-medium text-mutedfg mb-3">By status</div>
+      <ul class="space-y-2 text-sm">
+        {% for status, n in by_status.items() %}
+        <li class="flex items-center justify-between">
+          <span class="capitalize">{{ status|replace('_', ' ') }}</span>
+          <span class="font-mono tabnum text-mutedfg">{{ n }}</span>
+        </li>
+        {% endfor %}
+        {% if not by_status %}
+        <li class="text-mutedfg text-[13px]">No activity yet.</li>
+        {% endif %}
+      </ul>
+    </div>
+
+    <div class="card card-pad">
+      <div class="text-[12px] font-medium text-mutedfg mb-3">Signed in</div>
+      <div class="flex items-center gap-3">
+        <span class="avatar !w-10 !h-10 !text-sm">
+          {{ user.name[0]|upper }}{% if ' ' in user.name %}{{ user.name.split(' ')[1][0]|upper }}{% endif %}
+        </span>
+        <div class="leading-tight">
+          <div class="text-sm font-medium">{{ user.name }}</div>
+          <div class="text-[12px] text-mutedfg">{{ user.role.value|replace('_', ' ') }}</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+</section>
+{% endblock %}

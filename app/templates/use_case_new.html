@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}New use case · AI Governance Workbench{% endblock %}
+{% block content %}
+<div class="max-w-3xl mx-auto">
+  <div class="mb-6">
+    <a href="/" class="inline-flex items-center gap-1.5 text-sm text-mutedfg hover:text-fg">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Back to dashboard
+    </a>
+  </div>
+
+  <div class="mb-8">
+    <h1 class="text-2xl font-semibold tracking-tight">New use case</h1>
+    <p class="text-sm text-mutedfg mt-1">Draft a proposed AI use case. Risk classification is derived from your answers — not asked directly.</p>
+  </div>
+
+  <form method="post" action="/ui/use-cases">
+    <div class="card card-pad space-y-5">
+      <div>
+        <label for="title" class="block text-sm font-medium mb-1.5">Title</label>
+        <input id="title" name="title" required class="field" placeholder="e.g. Internal policy Q&A copilot"/>
+        <p class="text-[12px] text-mutedfg mt-1.5">A short, searchable label.</p>
+      </div>
+
+      <div>
+        <label for="business_purpose" class="block text-sm font-medium mb-1.5">Business purpose</label>
+        <textarea id="business_purpose" name="business_purpose" rows="4" required class="field"
+          placeholder="What problem does this use case solve? Who benefits? What decision does the model inform?"></textarea>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <div>
+          <label for="model_name" class="block text-sm font-medium mb-1.5">Model</label>
+          <input id="model_name" name="model_name" required class="field" placeholder="gpt-4o, claude-3.5-sonnet, in-house-mlp"/>
+        </div>
+        <div>
+          <label for="hosting" class="block text-sm font-medium mb-1.5">Hosting</label>
+          <input id="hosting" name="hosting" required class="field" placeholder="agency-azure, vendor-cloud, on-prem"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-6 flex items-center justify-between">
+      <p class="text-[12px] text-mutedfg">Drafts are private to you until you submit them.</p>
+      <div class="flex items-center gap-2">
+        <a href="/" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary">Create draft</button>
+      </div>
+    </div>
+  </form>
+
+  <div class="mt-10 card card-pad" style="background: var(--muted);">
+    <div class="flex items-center gap-2 mb-3">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-mutedfg"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+      <div class="text-[12px] font-medium text-mutedfg">What happens next</div>
+    </div>
+    <ol class="space-y-2 text-sm">
+      <li class="flex gap-3"><span class="font-mono text-[12px] text-mutedfg w-5">01</span><span>Save as draft. Only you can see it.</span></li>
+      <li class="flex gap-3"><span class="font-mono text-[12px] text-mutedfg w-5">02</span><span>Submit to score the rubric and enter triage.</span></li>
+      <li class="flex gap-3"><span class="font-mono text-[12px] text-mutedfg w-5">03</span><span>Privacy and security reviews run in parallel.</span></li>
+      <li class="flex gap-3"><span class="font-mono text-[12px] text-mutedfg w-5">04</span><span>The Authorizing Official approves, conditions, rejects, or sends back.</span></li>
+    </ol>
+  </div>
+</div>
+{% endblock %}

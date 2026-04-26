@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="description" content="Intake, review, approval, and audit for proposed AI use cases in regulated organizations."/>
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)"/>
+  <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)"/>
+  <meta name="color-scheme" content="light dark"/>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2309090b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='M12 2L3 7l9 5 9-5-9-5z'/><path d='M3 12l9 5 9-5'/><path d='M3 17l9 5 9-5'/></svg>"/>
+  <title>{% block title %}AI Governance Workbench{% endblock %}</title>
+  <script>
+    // theme init — run before paint to avoid flash
+    (function () {
+      try {
+        const saved = localStorage.getItem('theme');
+        const sys   = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        const theme = saved || sys;
+        if (theme === 'dark') document.documentElement.classList.add('dark');
+      } catch (_) {}
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Geist', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            mono: ['"Geist Mono"', 'ui-monospace', 'monospace'],
+          },
+          borderRadius: {
+            DEFAULT: '6px',
+            md: '8px',
+            lg: '12px',
+            xl: '16px',
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    /* ---------------- design tokens (light) ---------------- */
+    :root {
+      --bg:         #ffffff;
+      --surface:    #ffffff;
+      --muted:      #fafafa;
+      --muted-2:    #f4f4f5;
+      --fg:         #09090b;
+      --fg-soft:    #3f3f46;
+      --fg-mute:    #71717a;
+      --border:     #e4e4e7;
+      --border-soft:#f4f4f5;
+      --ring:       #18181b;
+      --accent:     #3b82f6;
+      --nav-bg:     rgba(255,255,255,0.85);
+
+      --low-bg:     #f0fdf4;
+      --low-fg:     #15803d;
+      --low-bd:     #bbf7d0;
+      --mod-bg:     #fffbeb;
+      --mod-fg:     #b45309;
+      --mod-bd:     #fde68a;
+      --high-bg:    #fef2f2;
+      --high-fg:    #b91c1c;
+      --high-bd:    #fecaca;
+
+      --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+      --shadow-lift: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+    }
+
+    /* ---------------- design tokens (dark) ---------------- */
+    .dark {
+      --bg:         #09090b;
+      --surface:    #0c0c0f;
+      --muted:      #111113;
+      --muted-2:    #1a1a1d;
+      --fg:         #fafafa;
+      --fg-soft:    #d4d4d8;
+      --fg-mute:    #a1a1aa;
+      --border:     #27272a;
+      --border-soft:#1f1f22;
+      --ring:       #e4e4e7;
+      --accent:     #60a5fa;
+      --nav-bg:     rgba(9,9,11,0.85);
+
+      --low-bg:     #052e1a;
+      --low-fg:     #4ade80;
+      --low-bd:     #166534;
+      --mod-bg:     #3a2a0a;
+      --mod-fg:     #fbbf24;
+      --mod-bd:     #854d0e;
+      --high-bg:    #3d0f13;
+      --high-fg:    #fca5a5;
+      --high-bd:    #991b1b;
+
+      --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.6);
+      --shadow-lift: 0 1px 3px 0 rgb(0 0 0 / 0.7), 0 1px 2px -1px rgb(0 0 0 / 0.5);
+    }
+
+    html, body { height: 100%; }
+    body {
+      font-family: 'Geist', ui-sans-serif, system-ui, sans-serif;
+      font-feature-settings: 'cv11', 'ss01';
+      -webkit-font-smoothing: antialiased;
+      color: var(--fg);
+      background: var(--bg);
+    }
+    .font-mono { font-family: 'Geist Mono', ui-monospace, monospace; }
+    .tabnum { font-variant-numeric: tabular-nums; }
+
+    /* Utility colors bound to tokens */
+    .text-fg      { color: var(--fg); }
+    .text-fg-soft { color: var(--fg-soft); }
+    .text-mutedfg { color: var(--fg-mute); }
+    .bg-surface   { background: var(--surface); }
+    .bg-muted     { background: var(--muted); }
+    .bg-muted-2   { background: var(--muted-2); }
+    .border-border{ border-color: var(--border); }
+    .divide-border > * + * { border-color: var(--border); }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 6px; padding: 8px 14px; border-radius: 8px;
+      font-size: 14px; font-weight: 500; line-height: 1;
+      transition: background 120ms ease, color 120ms ease, border-color 120ms ease, box-shadow 120ms ease, transform 80ms ease;
+      cursor: pointer; white-space: nowrap;
+    }
+    .btn:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+    .btn:active { transform: translateY(0.5px); }
+    .btn-primary {
+      background: var(--fg); color: var(--bg); border: 1px solid var(--fg);
+    }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-secondary {
+      background: var(--surface); color: var(--fg); border: 1px solid var(--border);
+      box-shadow: var(--shadow-card);
+    }
+    .btn-secondary:hover { background: var(--muted); border-color: var(--fg-mute); }
+    .btn-ghost {
+      background: transparent; color: var(--fg); border: 1px solid transparent;
+    }
+    .btn-ghost:hover { background: var(--muted-2); }
+
+    /* Inputs */
+    .field {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-size: 14px; font-family: inherit;
+      color: var(--fg);
+      transition: border-color 120ms ease, box-shadow 120ms ease;
+    }
+    .field::placeholder { color: var(--fg-mute); opacity: 0.75; }
+    .field:hover { border-color: var(--fg-mute); }
+    .field:focus {
+      outline: none;
+      border-color: var(--fg);
+      box-shadow: 0 0 0 3px color-mix(in oklab, var(--fg) 12%, transparent);
+    }
+
+    /* Cards */
+    .card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      box-shadow: var(--shadow-card);
+    }
+    .card-pad    { padding: 24px; }
+    .card-pad-sm { padding: 16px; }
+
+    /* Badges */
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 12px; font-weight: 500; line-height: 1;
+      padding: 4px 9px; border-radius: 999px;
+      border: 1px solid transparent;
+    }
+    .badge-neutral  { background: var(--muted-2); color: var(--fg-soft); border-color: var(--border); }
+    .badge-low      { background: var(--low-bg);  color: var(--low-fg);  border-color: var(--low-bd); }
+    .badge-moderate { background: var(--mod-bg);  color: var(--mod-fg);  border-color: var(--mod-bd); }
+    .badge-high     { background: var(--high-bg); color: var(--high-fg); border-color: var(--high-bd); }
+    .badge-cui      { background: var(--high-bg); color: var(--high-fg); border-color: var(--high-bd); }
+    .badge-dot      { width: 6px; height: 6px; border-radius: 999px; background: currentColor; display: inline-block; }
+
+    /* Status pill */
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 12px; font-weight: 500; padding: 4px 10px;
+      background: var(--muted-2); color: var(--fg-soft);
+      border-radius: 999px; border: 1px solid var(--border);
+    }
+
+    /* Tables */
+    table.t { width: 100%; border-collapse: separate; border-spacing: 0; }
+    table.t thead th {
+      text-align: left;
+      font-size: 12px; font-weight: 500; color: var(--fg-mute);
+      padding: 12px 16px; background: var(--muted);
+      border-bottom: 1px solid var(--border);
+    }
+    table.t thead th:first-child { border-top-left-radius: 11px; }
+    table.t thead th:last-child  { border-top-right-radius: 11px; }
+    table.t tbody td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border-soft);
+      font-size: 14px; vertical-align: middle;
+    }
+    table.t tbody tr:last-child td { border-bottom: 0; }
+    table.t tbody tr:hover { background: var(--muted); }
+
+    /* Links */
+    a.link { color: var(--fg); text-decoration: none; font-weight: 500; }
+    a.link:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+
+    /* Nav */
+    .nav { background: var(--nav-bg); backdrop-filter: saturate(180%) blur(8px); }
+    .nav-link {
+      padding: 6px 12px; border-radius: 8px; font-size: 14px;
+      color: var(--fg-mute);
+      transition: background 120ms ease, color 120ms ease;
+    }
+    .nav-link:hover, .nav-link.active { color: var(--fg); background: var(--muted-2); }
+
+    /* Avatar */
+    .avatar {
+      width: 32px; height: 32px; border-radius: 999px;
+      background: var(--muted-2); color: var(--fg);
+      border: 1px solid var(--border);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 600;
+    }
+
+    /* Page transition */
+    main > * { animation: pageIn 200ms ease both; }
+    @keyframes pageIn { from { opacity: 0; transform: translateY(2px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Empty state illustration */
+    .empty-icon {
+      width: 40px; height: 40px; border-radius: 12px;
+      background: var(--muted-2); color: var(--fg-mute);
+      display: inline-flex; align-items: center; justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    /* Dark-mode scrollbars subtle polish */
+    .dark ::-webkit-scrollbar-thumb { background: var(--muted-2); }
+  </style>
+</head>
+<body class="min-h-full flex flex-col">
+  <header class="nav border-b border-border sticky top-0 z-10">
+    <div class="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between gap-4">
+      <a href="/" class="flex items-center gap-2.5 group shrink-0">
+        <span class="inline-flex items-center justify-center w-7 h-7 rounded-md bg-[color:var(--fg)] text-[color:var(--bg)]">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7l9 5 9-5-9-5z"/><path d="M3 12l9 5 9-5"/><path d="M3 17l9 5 9-5"/></svg>
+        </span>
+        <span class="text-[15px] font-semibold tracking-tight">AI Governance Workbench</span>
+      </a>
+      {% if user %}
+      <nav class="hidden md:flex items-center gap-1">
+        {% set nav_active = active_nav|default('') %}
+        <a href="/" class="nav-link {% if nav_active == 'dashboard' %}active{% endif %}">Dashboard</a>
+        <a href="/use-cases/new" class="nav-link {% if nav_active == 'new' %}active{% endif %}">New use case</a>
+      </nav>
+      <div class="flex items-center gap-2">
+        <button type="button" id="theme-toggle" aria-label="Toggle theme" class="btn btn-ghost !p-2" title="Toggle theme">
+          <svg class="dark:hidden" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m4.93 19.07 1.41-1.41"/><path d="m17.66 6.34 1.41-1.41"/></svg>
+          <svg class="hidden dark:block" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <div class="text-right leading-tight hidden sm:block">
+          <div class="text-[13px] font-medium">{{ user.name }}</div>
+          <div class="text-[11px] text-mutedfg">{{ user.role.value|replace('_', ' ') }}</div>
+        </div>
+        <span class="avatar">
+          {{ user.name[0]|upper }}{% if ' ' in user.name %}{{ user.name.split(' ')[1][0]|upper }}{% endif %}
+        </span>
+        <form method="post" action="/logout" class="inline">
+          <button type="submit" class="btn btn-ghost !p-2" title="Sign out" aria-label="Sign out">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          </button>
+        </form>
+      </div>
+      {% else %}
+      <div class="flex items-center gap-2">
+        <button type="button" id="theme-toggle" aria-label="Toggle theme" class="btn btn-ghost !p-2" title="Toggle theme">
+          <svg class="dark:hidden" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m4.93 19.07 1.41-1.41"/><path d="m17.66 6.34 1.41-1.41"/></svg>
+          <svg class="hidden dark:block" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+      {% endif %}
+    </div>
+  </header>
+
+  <main class="max-w-7xl w-full mx-auto px-6 py-8 flex-1">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="border-t border-border">
+    <div class="max-w-7xl mx-auto px-6 py-5 flex flex-wrap items-center justify-between gap-3 text-[12px] text-mutedfg">
+      <div>AI Governance Workbench · v0.1.0 · <span class="font-mono">demo</span></div>
+      <div>Audit chain verifiable · Rubric v1 · Template v1</div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const btn = document.getElementById('theme-toggle');
+      if (!btn) return;
+      btn.addEventListener('click', function () {
+        const root = document.documentElement;
+        const nowDark = !root.classList.contains('dark');
+        root.classList.toggle('dark', nowDark);
+        try { localStorage.setItem('theme', nowDark ? 'dark' : 'light'); } catch (_) {}
+        // update theme-color meta to match
+        const meta = document.querySelector('meta[name="theme-color"]:not([media])');
+        if (meta) meta.setAttribute('content', nowDark ? '#09090b' : '#ffffff');
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+{
+  "version": "v1",
+  "base_controls": {
+    "low": ["AC-2", "AU-2", "RA-3"],
+    "moderate": ["AC-2", "AC-5", "AU-2", "AU-9", "RA-3", "CM-3"],
+    "high": ["AC-2", "AC-5", "AC-6", "AU-2", "AU-9", "RA-3", "CM-3", "SI-12"]
+  },
+  "additional": {
+    "external_vendor": ["CA-3", "SA-9", "SR-3"],
+    "contains_cui": ["SC-8", "SC-28"],
+    "model_kind_ml_model": ["SI-7"]
+  },
+  "ai_rmf": {
+    "low": ["Govern", "Map"],
+    "moderate": ["Govern", "Map", "Measure"],
+    "high": ["Govern", "Map", "Measure", "Manage"]
+  }
+}

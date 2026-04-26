@@ -1,0 +1,18 @@
+services:
+  workbench:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: ai-governance-workbench:dev
+    ports:
+      - "8000:8000"
+    volumes:
+      - workbench-data:/app/data
+    environment:
+      DATABASE_URL: sqlite:////app/data/workbench.db
+      AI_FEATURES_ENABLED: "false"
+      SESSION_SECRET: "${SESSION_SECRET:?SESSION_SECRET must be set to a random 32+ byte value (e.g. python -c 'import secrets; print(secrets.token_urlsafe(32))')}"
+      ENVIRONMENT: demo
+
+volumes:
+  workbench-data:

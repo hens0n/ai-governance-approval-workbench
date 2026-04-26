@@ -1,0 +1,9 @@
+[
+  {"email": "requestor@agency.gov",   "name": "Riley Requestor",   "role": "requestor",          "password": "demo"},
+  {"email": "triager@agency.gov",     "name": "Tara Triager",      "role": "security_reviewer",  "password": "demo"},
+  {"email": "security@agency.gov",    "name": "Sam Security",      "role": "security_reviewer",  "password": "demo"},
+  {"email": "privacy@agency.gov",     "name": "Priya Privacy",     "role": "privacy_reviewer",   "password": "demo"},
+  {"email": "ao@agency.gov",          "name": "Adam AO",           "role": "ao",                 "password": "demo"},
+  {"email": "ciso@agency.gov",        "name": "Cora CISO",         "role": "ciso",               "password": "demo"},
+  {"email": "auditor@agency.gov",     "name": "Aaron Auditor",     "role": "auditor",            "password": "demo"}
+]
