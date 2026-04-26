@@ -11,6 +11,7 @@ from sqlmodel import Session, select
 from app.auth import current_user, writer_user
 from app.db import get_session
 from app.models import ReviewDecision, ReviewRole, StateTransition, UseCase, User, UserRole
+from app.services.expiring import expiring_soon
 from app.services.lifecycle import LifecycleService
 from app.workflow import allowed_actions
 
@@ -41,10 +42,16 @@ def dashboard(
     by_status: dict[str, int] = {}
     for uc in use_cases:
         by_status[uc.status.value] = by_status.get(uc.status.value, 0) + 1
+    expiring_rows = expiring_soon(session)
     return templates.TemplateResponse(
         request,
         "dashboard.html",
-        {"user": user, "use_cases": use_cases, "by_status": by_status},
+        {
+            "user": user,
+            "use_cases": use_cases,
+            "by_status": by_status,
+            "expiring_rows": expiring_rows,
+        },
     )
 
 

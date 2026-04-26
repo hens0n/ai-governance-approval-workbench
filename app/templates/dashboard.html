@@ -52,6 +52,47 @@
   </div>
 </section>
 
+<section class="card overflow-hidden mb-8">
+  <div class="px-6 py-4 border-b border-border">
+    <h2 class="text-base font-semibold">Re-reviews due (next 30 days)</h2>
+    <p class="text-[12px] text-mutedfg mt-0.5">{{ expiring_rows|length }} record{{ '' if expiring_rows|length == 1 else 's' }}</p>
+  </div>
+  {% if expiring_rows %}
+  <table class="t">
+    <thead>
+      <tr>
+        <th style="width: 8%;">ID</th>
+        <th style="width: 52%;">Use case</th>
+        <th style="width: 20%;">Due</th>
+        <th style="width: 20%;">Days remaining</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in expiring_rows %}
+      <tr>
+        <td class="font-mono text-mutedfg tabnum">{{ '%03d' % row.use_case_id }}</td>
+        <td><a href="/use-cases/{{ row.use_case_id }}" class="link">{{ row.title }}</a></td>
+        <td class="text-[13px] text-mutedfg tabnum">{{ row.due_date.strftime('%Y-%m-%d') }}</td>
+        <td>
+          {% if row.days_remaining < 0 %}
+            <span class="badge badge-high"><span class="badge-dot"></span>{{ -row.days_remaining }} days overdue</span>
+          {% elif row.days_remaining <= 7 %}
+            <span class="badge badge-high"><span class="badge-dot"></span>{{ row.days_remaining }} days</span>
+          {% else %}
+            <span class="badge badge-moderate"><span class="badge-dot"></span>{{ row.days_remaining }} days</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="px-6 py-10 text-center text-[13px] text-mutedfg">
+    No re-reviews due in the next 30 days.
+  </div>
+  {% endif %}
+</section>
+
 <section class="grid grid-cols-1 lg:grid-cols-4 gap-6">
   <div class="lg:col-span-3">
     <div class="card overflow-hidden">

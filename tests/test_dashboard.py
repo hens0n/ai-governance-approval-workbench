@@ -88,3 +88,22 @@ def test_api_dashboard_includes_due_rereview(monkeypatch, tmp_path) -> None:
     assert item["title"] == "policy copilot"
     assert item["days_remaining"] in (9, 10)
     assert "T" in item["due_date"]
+
+
+def test_dashboard_html_renders_expiring_panel(monkeypatch, tmp_path) -> None:
+    client, engine = _fresh_client(monkeypatch, tmp_path)
+    _seed_due_rereview(engine, due_in_days=10, title="policy copilot")
+    _login(client)
+    r = client.get("/")
+    assert r.status_code == 200
+    html = r.text
+    assert "Re-reviews due (next 30 days)" in html
+    assert "policy copilot" in html
+
+
+def test_dashboard_html_empty_state_when_no_due_rereviews(monkeypatch, tmp_path) -> None:
+    client, _ = _fresh_client(monkeypatch, tmp_path)
+    _login(client)
+    r = client.get("/")
+    assert r.status_code == 200
+    assert "No re-reviews due in the next 30 days." in r.text
