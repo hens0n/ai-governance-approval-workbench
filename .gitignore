@@ -1,0 +1,240 @@
+# =============================================================================
+# Python
+# =============================================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyd
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Stub files
+*.pyi.bak
+
+# =============================================================================
+# Virtual environments
+# =============================================================================
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.python-version
+
+# =============================================================================
+# Package managers (uv / pip / poetry / pdm)
+# =============================================================================
+# Keep uv.lock checked in (project uses uv) — do NOT ignore it.
+.pdm-python
+.pdm-build/
+__pypackages__/
+pip-wheel-metadata/
+
+# =============================================================================
+# Testing & coverage
+# =============================================================================
+.pytest_cache/
+.cache/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+*.py,cover
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+nosetests.xml
+test-results/
+junit.xml
+
+# =============================================================================
+# Type checkers & linters
+# =============================================================================
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+.ruff_cache/
+.pyright/
+.basedpyright/
+
+# =============================================================================
+# Jupyter / IPython
+# =============================================================================
+.ipynb_checkpoints/
+profile_default/
+ipython_config.py
+*.ipynb_checkpoints
+
+# =============================================================================
+# Secrets & local config
+# =============================================================================
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+*.pem
+*.key
+*.crt
+*.p12
+secrets/
+.secrets/
+credentials.json
+service-account*.json
+
+# =============================================================================
+# Databases (local dev SQLite & dumps)
+# =============================================================================
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+*.sqlite3-journal
+data/*.db
+data/*.sqlite*
+*.dump
+*.sql.gz
+
+# Alembic — keep migrations, ignore local artifacts only
+# (Migrations under app/migrations/versions should be tracked.)
+
+# =============================================================================
+# Logs & runtime files
+# =============================================================================
+*.log
+logs/
+*.pid
+*.seed
+*.pid.lock
+celerybeat-schedule
+celerybeat.pid
+
+# =============================================================================
+# FastAPI / web app artifacts
+# =============================================================================
+instance/
+uploads/
+media/
+static/collected/
+.staticfiles/
+
+# =============================================================================
+# Docker
+# =============================================================================
+docker-compose.override.yml
+docker-compose.override.yaml
+.docker/
+
+# =============================================================================
+# Editors & IDEs
+# =============================================================================
+# VS Code
+.vscode/
+!.vscode/settings.json.example
+!.vscode/extensions.json
+
+# JetBrains (PyCharm, IntelliJ)
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Sublime
+*.sublime-project
+*.sublime-workspace
+
+# Vim / Emacs
+*.swp
+*.swo
+*~
+\#*\#
+.\#*
+
+# Zed
+.zed/
+
+# Cursor / Windsurf / AI assistants
+.cursor/
+.windsurf/
+.aider*
+.continue/
+
+# =============================================================================
+# OS
+# =============================================================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+.fseventsd
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# =============================================================================
+# Node (in case of frontend tooling later)
+# =============================================================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# =============================================================================
+# Project-specific
+# =============================================================================
+# Local scratch / experimentation
+scratch/
+tmp/
+.tmp/
+*.bak
+*.orig
