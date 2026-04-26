@@ -1,9 +1,10 @@
 """Service: list ReReviews due within a soft window (default 30 days).
 
 Used by the dashboard surfaces (JSON + HTML) so reviewers can see which
-post-approval re-reviews are coming due. Rows whose parent UseCase is no
-longer in an active approved state are excluded — those are tracked by
-status counts elsewhere or are terminal.
+post-approval re-reviews are coming due — and which have slipped past
+their due date without being completed (negative ``days_remaining``).
+Rows whose parent UseCase is no longer in an active approved state are
+excluded; those are tracked by status counts elsewhere or are terminal.
 """
 from __future__ import annotations
 
@@ -50,6 +51,9 @@ def expiring_soon(
             use_case_id=uc.id,
             title=uc.title,
             due_date=rr.due_date,
+            # timedelta.days truncates toward negative infinity:
+            # 4h12m → 0, -1m → -1. Callers should treat this as a
+            # display approximation, not a precise countdown.
             days_remaining=(rr.due_date - now).days,
         )
         for rr, uc in session.exec(stmt).all()
